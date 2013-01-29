@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>gapagent Log</title>
+    <style>
+        #change_run {
+            width: 100px;
+            height: 50px;
+        }
+        #log {
+            width: 100%; background: #111; color: #ddd;
+        }
+        #clear {
+            width: 100px;
+            height: 50px;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>gapagent Log Page</h1>
+    <button id="clear" onclick="gapagent.clear();">clear log</button>
+    <div id="log">
+    </div>
+    </body>
+<script>
+var gapagent  = {
+    logDOM : document.getElementById("log"),
+    debug : function(tag, msg) {
+        this.logDOM.innerHTML += '<div>' + tag + ' : ' + msg + '</div>';
+    },
+    error : function(tag, msg) {
+        this.logDOM.innerHTML += '<div class="error">' + tag + ' : ' + msg + '</div>';
+    },
+    clear : function() {
+        this.logDOM.innerHTML = '';
+    }
+};
+</script>
+</html>
