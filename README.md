@@ -14,6 +14,4 @@ a tool for apache cordova development
 
 3. 在cordova-*.js"之前加入下面代码
 
-   `
-   <script src="path..to/gapagent-1.1.js#[ip]:8989"></script>
-   `
+   `<script src="path..to/gapagent-1.1.js#[phone_ip]:8989"></script>`
