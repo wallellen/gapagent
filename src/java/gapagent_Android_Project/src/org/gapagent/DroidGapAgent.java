@@ -21,21 +21,21 @@ public class DroidGapAgent extends DroidGap implements MessageListener {
 	public static boolean track = true;
 	
 	private JWebSocket webSocket;
-	
-	private boolean loaded = false;
 
 	@Override
 	public void init() {
 		super.init();
 		log = new AgentPageLog() {
-			public void callJavascript(String javascript) {
+			public void callJavascript(final String javascript) {
 				if(null != DroidGapAgent.this.appView) {
 					Log.d(LOG_TAG, "javascript:" + javascript);
 					try {
-						DroidGapAgent.this.appView.loadUrl("javascript:" + javascript);
-					} catch(Exception e) {
-						
-					}
+						DroidGapAgent.this.runOnUiThread(new Runnable() {
+							public void run() {
+								DroidGapAgent.this.appView.loadUrl("javascript:" + javascript);
+							}
+						});
+					} catch(Exception e) {}
 					
 				}
 			}
@@ -74,23 +74,36 @@ public class DroidGapAgent extends DroidGap implements MessageListener {
         
 	}
 
-	@SuppressWarnings("deprecation")
 	protected void onPluginResult(PluginResult result, String callbackId) {
 		try {
-			String resultJson = result.getJSONString();
-			JSONObject obj = new JSONObject(resultJson);
-			obj.put("callbackId", callbackId);
-			resultJson = obj.toString();
-			Log.d(LOG_TAG, "result : " + resultJson);
-			log.d(LOG_TAG, "result : " + resultJson);
-			this.send(resultJson);
+			String js = this.encodeAsJs(result, callbackId);
+			Log.d(LOG_TAG, "result : " + js);
+			log.d(LOG_TAG, "result : " + js);
+			this.send(js);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Log.e(LOG_TAG, "error : " + e.getMessage());
 			log.d(LOG_TAG, "error : " + e.getMessage());
-			this.send(result.toErrorCallbackString(callbackId));
 		}
 		
+	}
+	
+	private String encodeAsJs(PluginResult result, String callbackId) {
+		StringBuilder sb = new StringBuilder();
+		int status = result.getStatus();
+        boolean success = (status == PluginResult.Status.OK.ordinal()) || (status == PluginResult.Status.NO_RESULT.ordinal());
+        sb.append("cordova.callbackFromNative('")
+          .append(callbackId)
+          .append("',")
+          .append(success)
+          .append(",")
+          .append(status)
+          .append(",")
+          .append(result.getMessage())
+          .append(",")
+          .append(result.getKeepCallback())
+          .append(");");
+        return sb.toString();
 	}
 
 	protected String onData(String data) {

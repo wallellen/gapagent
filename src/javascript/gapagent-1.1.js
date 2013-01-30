@@ -9,6 +9,7 @@
         printErrors : function(printStack) {
             var errors = gapagent.errors;
             for(var i=0; i<errors.length; i++) {
+                var e = errors[i];
                 if(printStack) {
                     console.log(e, e.stack);
                 } else {
@@ -45,7 +46,7 @@
             socket.onopen = function() {
                 params.onOpen && params.onOpen();
                 socket.onmessage = function(message) {
-                    params.onMessage && params.onMessage(_json.parse(message));
+                    params.onMessage && params.onMessage(message.data);
                 };
                 socket.onclose = function() {
                     params.onClose && params.onClose();
@@ -71,6 +72,8 @@
      * so we implements the _cordovaNative api to btain cordova.exec arguments,
      * and then send the arguments to android side via websocket
      */
+
+    // _cordovaNative
     var cordovaNativeApi = {
         exec : function(service, action, callbackId, argsJson) {
             try {
@@ -206,10 +209,14 @@
         setTimeout(function() {
             client.connect({
                 onOpen : function() {
-                    cordova.fireDocumentEvent("deviceready");
+                    var channel = cordova.require("cordova/channel");
+                    channel.onNativeReady.fire();
                 },
                 onMessage : function(message) {
                     try {
+                        if(gapagent.DEBUG) {
+                            console.log('[gapagent debug] receive : ', message);
+                        }
                         window.eval(message);
                     } catch(e) {
                         if(gapagent.DEBUG) {
