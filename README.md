@@ -11,4 +11,4 @@ a tool for apache cordova development
 2. 将原来继承DroidGap的主Activity发为继承org.gapagent.DroidGapAgent
   `MainActivity extends DroidGapAgent`
 
-3. 在<script src=".../cordova-*.js">之前加入下面代码
+3. 在cordova-*.js"之前加入下面代码
