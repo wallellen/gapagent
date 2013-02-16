@@ -15,3 +15,7 @@ a tool for apache cordova development
 3. 在cordova-*.js"之前加入下面代码, 其中[phone_id]为手机ip地址:
 
    `<script src="path..to/gapagent-1.1.js#[phone_ip]:8989"></script>`
+   
+   有两个现成的链接可用:
+   http://gapagent.sinaapp.com/gapagent-1.1.js
+   https://raw.github.com/zzm2q/gapagent/master/src/javascript/gapagent-1.1.js
